@@ -21,6 +21,14 @@ Future<bool> isRunningService()async{
 
 }
 
+Future stopService()async{
+   try{
+    await platform.invokeMethod('stopLocationService');
+    }catch(e){
+      print("Error starting service: $e");
+    }
+}
+
 // To stop the service
 // await platform.invokeMethod('stopLocationService');
 }

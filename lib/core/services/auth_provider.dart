@@ -45,6 +45,7 @@ class AuthProvider extends ChangeNotifier {
         await TokenStorage.clearToken();
       }
     } catch (e) {
+      print(e);
       _errorMessage = 'Network error occurred';
       await TokenStorage.clearToken();
     } finally {

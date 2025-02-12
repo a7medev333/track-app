@@ -13,21 +13,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isServiceRunning = false;
+  Service service = Service();
 
   @override
   void initState() {
     super.initState();
     _initializeServices();
-    // _checkServiceStatus();
   }
 
   Future<void> _initializeServices() async {
     try {
-      // final notificationsPlugin = FlutterLocalNotificationsPlugin();
-      //  BackgroundHttpService(notificationsPlugin: notificationsPlugin).startBackgroundService();
-      // await BackgroundService.initialize();
-      // await BackgroundService.startPeriodicTask();
-      Service service = Service();
+
       await service.startService();
       bool isRun = await service.isRunningService();
       if (mounted) {
@@ -47,6 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    stopService();
+  }
+
+  stopService()async{
+    await service.stopService();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -58,27 +63,25 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.logout),
             onPressed: () async {
              TokenStorage.clearToken();
-             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginScreen()));
+             await stopService();
+             // ignore: use_build_context_synchronously
+             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
           ),
         ],
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Location Service Status',
-              style: TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 20),
-            const Icon(
+           
+            Icon(
               Icons.location_on ,
               size: 48,
               color: Colors.green ,
             ),
-            const SizedBox(height: 20),
-            const Text(
+            SizedBox(height: 15),
+            Text(
               'Service is Running' ,
               style: TextStyle(
                 fontSize: 18,
@@ -86,12 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            TextButton(
-              child:const Text("Get Token"),
-              onPressed:()async{
-                print("Token : ${await TokenStorage.getToken()}");
-              },
-            ),
+           
           ],
         ),
       ),
